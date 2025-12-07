@@ -1,0 +1,30 @@
+{
+  "name": "fb-live-tool",
+  "version": "1.0.0",
+  "description": "Facebook Live Tool - 24 Jam Streaming Tool",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "pm2:start": "pm2 start ecosystem.config.js",
+    "pm2:stop": "pm2 stop fb-live-tool",
+    "pm2:restart": "pm2 restart fb-live-tool",
+    "pm2:delete": "pm2 delete fb-live-tool",
+    "pm2:logs": "pm2 logs fb-live-tool"
+  },
+  "keywords": [
+    "facebook",
+    "live",
+    "streaming",
+    "ffmpeg",
+    "rtmp"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

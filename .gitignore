@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pm2-error.log
+pm2-out.log
+
+# Environment variables
+.env
+.env.local
+
+# Video files (don't commit large video files)
+videos/*.mp4
+videos/*.mov
+videos/*.avi
+videos/*.mkv
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# PM2
+.pm2/
