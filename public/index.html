@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FB Live Tool - 24 Jam Streaming</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1em;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-start:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-stop {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-stop:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(245, 87, 108, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .status-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.running {
+            background: #4caf50;
+        }
+
+        .status-indicator.stopped {
+            background: #f44336;
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .status-text {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 25px;
+        }
+
+        .info-box h3 {
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+
+        .info-box ul {
+            margin-left: 20px;
+            color: #555;
+        }
+
+        .info-box li {
+            margin-bottom: 5px;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎥 FB Live Tool</h1>
+            <p>Streaming 24 Jam Non-Stop ke Facebook Live</p>
+        </div>
+
+        <div class="content">
+            <div class="info-box">
+                <h3>📋 Cara Menggunakan:</h3>
+                <ul>
+                    <li>Dapatkan Stream Key dari Facebook Creator Studio</li>
+                    <li>Upload video ke server (format: MP4, MOV, AVI)</li>
+                    <li>Pilih resolusi streaming (480p, 720p, atau 1080p)</li>
+                    <li>Klik "Mulai Live" untuk memulai streaming</li>
+                    <li>Video akan di-loop otomatis selama 24 jam</li>
+                </ul>
+            </div>
+
+            <div id="alert" class="alert"></div>
+
+            <form id="streamForm">
+                <div class="form-group">
+                    <label for="streamKey">Facebook Stream Key *</label>
+                    <input 
+                        type="text" 
+                        id="streamKey" 
+                        name="streamKey" 
+                        placeholder="Masukkan Stream Key dari Facebook"
+                        required
+                    >
+                    <small>Dapatkan dari: Facebook Creator Studio → Live Producer → Stream Key</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="videoPath">Path Video *</label>
+                    <input 
+                        type="text" 
+                        id="videoPath" 
+                        name="videoPath" 
+                        placeholder="Contoh: /home/user/video.mp4 atau ./videos/sample.mp4"
+                        required
+                    >
+                    <small>Path lengkap ke file video di server</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="resolution">Resolusi Streaming</label>
+                    <select id="resolution" name="resolution">
+                        <option value="480p">480p (SD) - 1200kbps</option>
+                        <option value="720p" selected>720p (HD) - 2500kbps</option>
+                        <option value="1080p">1080p (Full HD) - 4500kbps</option>
+                    </select>
+                    <small>Pilih kualitas streaming sesuai bandwidth</small>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn btn-start" id="startBtn">
+                        ▶ Mulai Live
+                    </button>
+                    <button type="button" class="btn btn-stop" id="stopBtn">
+                        ⏹ Hentikan Live
+                    </button>
+                </div>
+            </form>
+
+            <div class="status-card">
+                <div class="status-indicator stopped" id="statusIndicator"></div>
+                <span class="status-text" id="statusText">Status: STOPPED</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '';
+        let statusCheckInterval = null;
+
+        // Check status on load
+        checkStatus();
+
+        // Auto-refresh status every 3 seconds
+        statusCheckInterval = setInterval(checkStatus, 3000);
+
+        async function checkStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/api/status`);
+                const data = await response.json();
+                updateStatus(data.status);
+            } catch (error) {
+                console.error('Error checking status:', error);
+            }
+        }
+
+        function updateStatus(status) {
+            const indicator = document.getElementById('statusIndicator');
+            const text = document.getElementById('statusText');
+            const startBtn = document.getElementById('startBtn');
+            const stopBtn = document.getElementById('stopBtn');
+
+            if (status === 'RUNNING') {
+                indicator.className = 'status-indicator running';
+                text.textContent = 'Status: RUNNING - Live Aktif';
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+            } else {
+                indicator.className = 'status-indicator stopped';
+                text.textContent = 'Status: STOPPED';
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+            }
+        }
+
+        function showAlert(message, type = 'success') {
+            const alert = document.getElementById('alert');
+            alert.className = `alert alert-${type} show`;
+            alert.textContent = message;
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 5000);
+        }
+
+        document.getElementById('streamForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const startBtn = document.getElementById('startBtn');
+            const originalText = startBtn.innerHTML;
+            startBtn.innerHTML = '<span class="loading"></span> Memulai...';
+            startBtn.disabled = true;
+
+            try {
+                const formData = {
+                    streamKey: document.getElementById('streamKey').value,
+                    videoPath: document.getElementById('videoPath').value,
+                    resolution: document.getElementById('resolution').value
+                };
+
+                const response = await fetch(`${API_BASE}/api/start`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showAlert(data.message || 'Live streaming dimulai!', 'success');
+                    setTimeout(checkStatus, 1000);
+                } else {
+                    showAlert(data.error || 'Gagal memulai live streaming', 'error');
+                    startBtn.disabled = false;
+                }
+            } catch (error) {
+                showAlert('Error: ' + error.message, 'error');
+                startBtn.disabled = false;
+            } finally {
+                startBtn.innerHTML = originalText;
+            }
+        });
+
+        document.getElementById('stopBtn').addEventListener('click', async () => {
+            const stopBtn = document.getElementById('stopBtn');
+            const originalText = stopBtn.innerHTML;
+            stopBtn.innerHTML = '<span class="loading"></span> Menghentikan...';
+            stopBtn.disabled = true;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/stop`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showAlert(data.message || 'Live streaming dihentikan!', 'success');
+                    setTimeout(checkStatus, 1000);
+                } else {
+                    showAlert(data.error || 'Gagal menghentikan live streaming', 'error');
+                }
+            } catch (error) {
+                showAlert('Error: ' + error.message, 'error');
+            } finally {
+                stopBtn.innerHTML = originalText;
+            }
+        });
+    </script>
+</body>
+</html>
